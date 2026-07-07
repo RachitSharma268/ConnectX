@@ -1,8 +1,8 @@
 import express from "express";
-
-import ".../env";
+import dotenv from "dotenv";
 
 import { connectToSocket } from "./controller/socketManager.js";
+import router from "./routes/user.routes.js";
 
 import { createServer } from "node:http";
 
@@ -16,6 +16,7 @@ const app = express();
 const server = createServer(app);
 const io = connectToSocket(server);
 
+dotenv.config({ path: "../.env" });
 const dbUrl = process.env.ATLASDB_URL;
 
 app.use(cors());
