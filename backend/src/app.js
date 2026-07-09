@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 
 import { connectToSocket } from "./controller/socketManager.js";
-import router from "./routes/user.routes.js";
+import UserRoute from "./routes/user.routes.js";
 
 import { createServer } from "node:http";
 
@@ -20,9 +20,10 @@ dotenv.config({ path: "../.env" });
 const dbUrl = process.env.ATLASDB_URL;
 
 app.use(cors());
-
 app.use(express.json({ limit: "40kb" }));
 app.use(express.urlencoded({ limit: "40kb", extended: true }));
+
+app.use("/api/v1/user", UserRoute);
 
 app.get("/home", (req, res) => {
   res.send("Home page");
