@@ -26,6 +26,10 @@
     cursor: pointer;
 }
 
+.landingPageContainer nav .navLink p div{
+    font-size: 1.5rem;
+}
+
 .landingPageMainContainer {
     display: flex;
     justify-content: space-between;
