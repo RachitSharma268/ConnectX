@@ -14,12 +14,19 @@ const login = async (req, res) => {
     if (!user) {
       res.status(httpStatus.NOT_FOUND).json({ message: "User not registered" });
     }
-    if (bcrypt.compare(password, user.password)) {
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (isPasswordCorrect) {
       let token = crypto.randomBytes(20).toString("hex");
 
       user.token = token;
       await user.save();
       res.status(httpStatus.OK).json({ token: token });
+    } else {
+      res
+        .status(httpStatus.UNAUTHORIZED)
+        .json({ message: "Invalid Username or Password" });
     }
   } catch (error) {
     res.status(500).json({ message: `Something Went Wrong ${error}` });
@@ -44,6 +51,9 @@ const register = async (req, res) => {
     });
 
     await newUser.save();
+    res
+      .status(httpStatus.CREATED)
+      .json({ message: "User Registered Successfully" });
   } catch (error) {
     res.json(`Something went wrong ${error}`);
   }

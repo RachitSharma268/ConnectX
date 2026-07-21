@@ -9,10 +9,10 @@ import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-// import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { LockOutlined } from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-// import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import { Snackbar } from "@mui/material";
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -20,20 +20,25 @@ import { Snackbar } from "@mui/material";
 const defaultTheme = createTheme();
 
 export default function Authentication() {
-  const [username, setUsername] = React.useState();
-  const [password, setPassword] = React.useState();
-  const [name, setName] = React.useState();
-  const [error, setError] = React.useState();
-  const [message, setMessage] = React.useState();
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [message, setMessage] = React.useState("");
 
   const [formState, setFormState] = React.useState(0);
 
   const [open, setOpen] = React.useState(false);
 
+  const { handleLogin, handleRegister } = React.useContext(AuthContext);
+
   let handleAuth = async () => {
     try {
       if (formState === 0) {
         let result = await handleLogin(username, password);
+        setError(""); // Success par error clear
+        setMessage("Login successful!");
+        setOpen(true);
       }
       if (formState === 1) {
         let result = await handleRegister(name, username, password);
@@ -42,6 +47,7 @@ export default function Authentication() {
         setMessage(result);
         setOpen(true);
         setError("");
+        setName("");
         setFormState(0);
         setPassword("");
       }
@@ -49,6 +55,7 @@ export default function Authentication() {
       console.log(err);
       let message = err.response.data.message;
       setError(message);
+      setOpen(false);
     }
   };
 
@@ -84,7 +91,7 @@ export default function Authentication() {
             }}
           >
             <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              {/* <LockOutlinedIcon /> */}a
+              <LockOutlined />
             </Avatar>
 
             <div>
@@ -162,7 +169,12 @@ export default function Authentication() {
         </Grid>
       </Grid>
 
-      <Snackbar open={open} autoHideDuration={4000} message={message} />
+      <Snackbar
+        open={open}
+        autoHideDuration={4000}
+        message={message}
+        onClose={() => setOpen(false)}
+      />
     </ThemeProvider>
   );
 }
